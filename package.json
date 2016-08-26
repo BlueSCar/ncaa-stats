@@ -23,7 +23,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/BlueSCar/ncaa-stats.git"
-  }
+  },
   "devDependencies": {
     "chai": "^3.5.0"
   }
