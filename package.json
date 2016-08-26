@@ -20,6 +20,10 @@
     "request": "^2.74.0",
     "tabletojson": "^0.4.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlueSCar/ncaa-stats.git"
+  }
   "devDependencies": {
     "chai": "^3.5.0"
   }

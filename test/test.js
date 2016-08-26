@@ -124,3 +124,7 @@ describe('Sports', function() {
         });
     });
 });
+
+describe('Stats', function() {
+    it();
+});
