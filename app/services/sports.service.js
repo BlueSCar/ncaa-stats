@@ -38,7 +38,7 @@ exports.getSports = function(callback) {
     });
 };
 
-exports.getSportData = function(sport, callback) {
+exports.getSeasons = function(sport, callback) {
     var baseUrl = 'http://stats.ncaa.org/rankings/change_sport_year_div';
     var requestBody = 'sport_code=' + sport + '&academic_year=&division=&ranking_period=&team_individual=&game_high=&ranking_summary=N&org_id=-1&stat_seq=&conf_id=-1&region_id=-1&ncaa_custom_rank_summary_id=-1&user_custom_rank_summary_id=-1';
 
@@ -52,14 +52,42 @@ exports.getSportData = function(sport, callback) {
 
         if (response.statusCode == 200) {
             var data = {
-                sport: sport,
-                seasons: [],
-                divisions: []
+                seasons: []
             };
 
             var $ = cheerio.load(body);
 
             extractSelectList($, data.seasons, 'acadyr');
+            //extractSelectList($, data.divisions, 'u_div');
+
+            callback(data);
+        }
+    });
+};
+
+exports.getDivisions = function(options, callback){
+    if (!options.sport || !options.season) {
+        return;
+    }
+
+    var baseUrl = 'http://stats.ncaa.org/rankings/change_sport_year_div';
+    var requestBody = 'sport_code=' + options.sport + '&academic_year=' + options.season + '&division=&ranking_period=&team_individual=&game_high=&ranking_summary=N&org_id=-1&stat_seq=&conf_id=-1&region_id=-1&ncaa_custom_rank_summary_id=-1&user_custom_rank_summary_id=-1';
+
+    request.post({
+        url: baseUrl,
+        body: requestBody
+    }, function(error, response, body) {
+        if (error) {
+            console.error(err);
+        }
+
+        if (response.statusCode == 200) {
+            var data = {
+                divisions: []
+            };
+
+            var $ = cheerio.load(body);
+            
             extractSelectList($, data.divisions, 'u_div');
 
             callback(data);

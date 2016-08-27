@@ -21,8 +21,16 @@ ncaa.sports.getSports(function(data) {
     console.log(data);
 });
 
-// get list of seasons and divisions for a particular sport (e.g. Men's Basketball')
+// get list of seasons for a particular sport (e.g. Men's Basketball')
 ncaa.sports.getSportData('MBB', function(data) {
+    console.log(data);
+});
+
+// get list of divisions for a particular sport and season
+ncaa.sports.getDivisions({
+    sport: 'MFB', // Football
+    season: '2017' // The 2016-2017 season
+}, function(data) {
     console.log(data);
 });
 

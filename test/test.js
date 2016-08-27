@@ -18,13 +18,25 @@ describe('Sports', function() {
         });
     });
 
-    it('should populate division and season data for the given sport', function(done) {
-        sports.getSportData('MFB', function(data) {
+    it('should populate season data for the given sport', function(done) {
+        sports.getSeasons('MFB', function(data) {
             data.should.exist;
             data.should.be.json;
 
             data.seasons.should.exist;
             data.seasons.should.not.be.empty;
+
+            done();
+        });
+    });
+
+    it('should populate division data for the given sport and season', function(done) {
+        sports.getDivisions({
+            sport: 'MFB',
+            season: '2017'
+        }, function(data) {
+            data.should.exist;
+            data.should.be.json;
 
             data.divisions.should.exist;
             data.divisions.should.not.be.empty;
