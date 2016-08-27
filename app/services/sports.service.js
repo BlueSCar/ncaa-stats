@@ -4,7 +4,7 @@ var decode = require('decode-html');
 
 var extractSelectList = function($, array, id) {
     var selector = '#' + id + ' option';
-    $(selector).each(function(){
+    $(selector).each(function() {
         var value = $(this).prop('value');
         var name = decode($(this).html());
 
@@ -67,7 +67,7 @@ exports.getSportData = function(sport, callback) {
     });
 };
 
-exports.getSportDivisionData = function(options, callback){
+exports.getSportDivisionData = function(options, callback) {
     if (!options.sport || !options.season || !options.division) {
         return;
     }

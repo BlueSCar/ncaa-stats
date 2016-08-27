@@ -1,12 +1,3 @@
-var app = require('./app/data.service.js');
+var ncaa = require('./app/app');
 
-app.getStats({
-            year: 2015,
-            category: 13
-        }, function(data){
-            data.should.exist;
-            data.should.be.json;
-            done();
-        });
-
-module.exports = app;
+module.exports = ncaa;
