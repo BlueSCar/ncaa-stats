@@ -1,6 +1,6 @@
 {
   "name": "ncaa-stats",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A package for extracting NCAA statistics",
   "main": "index.js",
   "scripts": {

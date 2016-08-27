@@ -22,7 +22,7 @@ ncaa.sports.getSports(function(data) {
 });
 
 // get list of seasons for a particular sport (e.g. Men's Basketball')
-ncaa.sports.getSportData('MBB', function(data) {
+ncaa.sports.getSeasons('MBB', function(data) {
     console.log(data);
 });
 
