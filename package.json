@@ -1,6 +1,6 @@
 {
   "name": "ncaa-stats",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A package for extracting NCAA statistics",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "statistics",
     "ncaa"
   ],
-  "author": "Bill Radjewski",
+  "author": "BlueSCar",
   "license": "MIT",
   "dependencies": {
     "cheerio": "^0.20.0",
