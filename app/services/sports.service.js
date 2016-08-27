@@ -104,7 +104,7 @@ exports.getSportDivisionData = function(options, callback) {
     options.gameHigh = options.gameHigh || false;
 
     var rankingType = options.type == 'team' ? 'T' : 'I';
-    var isGameHigh = options.gameHigh == true ? 'Y' : 'N';
+    var isGameHigh = options.gameHigh == 'true' ? 'Y' : 'N';
 
     var baseUrl = 'http://stats.ncaa.org/rankings/change_sport_year_div';
     var requestBody = 'sport_code=' + options.sport + '&academic_year=' + options.season + '&division=' + options.division + '&ranking_period=&team_individual=' + rankingType + '&game_high=' + isGameHigh + '&ranking_summary=N&org_id=-1&stat_seq=&conf_id=-1&region_id=-1&ncaa_custom_rank_summary_id=-1&user_custom_rank_summary_id=-1';
