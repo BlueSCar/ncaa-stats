@@ -1,10 +1,10 @@
-var request = require('request');
+var rp = require('request-promise');
 var cheerio = require('cheerio');
 var decode = require('decode-html');
 
-var extractSelectList = function($, array, id) {
+var extractSelectList = function ($, array, id) {
     var selector = '#' + id + ' option';
-    $(selector).each(function() {
+    $(selector).each(function () {
         var value = $(this).prop('value');
         var name = decode($(this).html());
 
@@ -17,85 +17,102 @@ var extractSelectList = function($, array, id) {
     });
 };
 
-exports.getSports = function(callback) {
+exports.getSports = function (callback) {
     var baseUrl = 'http://stats.ncaa.org/';
 
-    request(baseUrl, function(err, response, body) {
-        if (err) {
-            console.error(err);
-        }
+    var promise = rp({
+        url: baseUrl
+    }).then((body) => {
+        var data = {
+            sports: []
+        };
 
-        if (response.statusCode == 200) {
-            var data = {
-                sports: []
-            };
+        var $ = cheerio.load(body);
+        extractSelectList($, data.sports, 'sport');
 
-            var $ = cheerio.load(body);
-            extractSelectList($, data.sports, 'sport');
-
-            callback(data);
-        }
+        return data;
     });
+
+    return callback ? promise.then(callback) : promise;
 };
 
-exports.getSeasons = function(sport, callback) {
+exports.getSeasons = function (sport, callback) {
     var baseUrl = 'http://stats.ncaa.org/rankings/change_sport_year_div';
-    var requestBody = 'sport_code=' + sport + '&academic_year=&division=&ranking_period=&team_individual=&game_high=&ranking_summary=N&org_id=-1&stat_seq=&conf_id=-1&region_id=-1&ncaa_custom_rank_summary_id=-1&user_custom_rank_summary_id=-1';
 
-    request.post({
+    var promise = rp({
         url: baseUrl,
-        body: requestBody
-    }, function(error, response, body) {
-        if (error) {
-            console.error(err);
+        method: 'POST',
+        formData: {
+            "sport_code": sport,
+            "academic_year": "",
+            "division": "",
+            "ranking_period": "",
+            "team_individual": "",
+            "game_high": "",
+            "ranking_summary": "N",
+            "org_id": "-1",
+            "stat_seq": "",
+            "conf_id": "-1",
+            "region_id": "-1",
+            "ncaa_custom_rank_summary_id": "-1",
+            "user_custom_rank_summary_id": -1
         }
+    }).then((body) => {
+        var data = {
+            seasons: []
+        };
 
-        if (response.statusCode == 200) {
-            var data = {
-                seasons: []
-            };
+        var $ = cheerio.load(body);
 
-            var $ = cheerio.load(body);
+        extractSelectList($, data.seasons, 'acadyr');
 
-            extractSelectList($, data.seasons, 'acadyr');
-            //extractSelectList($, data.divisions, 'u_div');
-
-            callback(data);
-        }
+        return data;
     });
+
+    return callback ? promise.then(callback) : promise;
 };
 
-exports.getDivisions = function(options, callback){
+exports.getDivisions = function (options, callback) {
     if (!options.sport || !options.season) {
         return;
     }
 
     var baseUrl = 'http://stats.ncaa.org/rankings/change_sport_year_div';
-    var requestBody = 'sport_code=' + options.sport + '&academic_year=' + options.season + '&division=&ranking_period=&team_individual=&game_high=&ranking_summary=N&org_id=-1&stat_seq=&conf_id=-1&region_id=-1&ncaa_custom_rank_summary_id=-1&user_custom_rank_summary_id=-1';
 
-    request.post({
+    var promise = rp({
         url: baseUrl,
-        body: requestBody
-    }, function(error, response, body) {
-        if (error) {
-            console.error(err);
+        method: 'POST',
+        formData: {
+            "sport_code": options.sport,
+            "academic_year": options.season,
+            "division": "",
+            "ranking_period": "",
+            "team_individual": "",
+            "game_high": "",
+            "ranking_summary": "N",
+            "org_id": "-1",
+            "stat_seq": "",
+            "conf_id": "-1",
+            "region_id": "-1",
+            "ncaa_custom_rank_summary_id": "-1",
+            "user_custom_rank_summary_id": -1
         }
+    }).then((body) => {
+        var data = {
+            divisions: []
+        };
 
-        if (response.statusCode == 200) {
-            var data = {
-                divisions: []
-            };
+        var $ = cheerio.load(body);
 
-            var $ = cheerio.load(body);
-            
-            extractSelectList($, data.divisions, 'u_div');
+        extractSelectList($, data.divisions, 'u_div');
 
-            callback(data);
-        }
+        return data;
     });
+
+    return callback ? promise.then(callback) : promise;
 };
 
-exports.getSportDivisionData = function(options, callback) {
+exports.getSportDivisionData = function (options, callback) {
     if (!options.sport || !options.season || !options.division) {
         return;
     }
@@ -107,33 +124,43 @@ exports.getSportDivisionData = function(options, callback) {
     var isGameHigh = options.gameHigh == 'true' ? 'Y' : 'N';
 
     var baseUrl = 'http://stats.ncaa.org/rankings/change_sport_year_div';
-    var requestBody = 'sport_code=' + options.sport + '&academic_year=' + options.season + '&division=' + options.division + '&ranking_period=&team_individual=' + rankingType + '&game_high=' + isGameHigh + '&ranking_summary=N&org_id=-1&stat_seq=&conf_id=-1&region_id=-1&ncaa_custom_rank_summary_id=-1&user_custom_rank_summary_id=-1';
 
-    request.post({
+    var promise = rp({
         url: baseUrl,
-        body: requestBody
-    }, function(error, response, body) {
-        if (error) {
-            console.error(err);
+        method: 'POST',
+        formData: {
+            "sport_code": options.sport,
+            "academic_year": options.season,
+            "division": options.division,
+            "ranking_period": "",
+            "team_individual": rankingType,
+            "game_high": isGameHigh,
+            "ranking_summary": "N",
+            "org_id": "-1",
+            "stat_seq": "",
+            "conf_id": "-1",
+            "region_id": "-1",
+            "ncaa_custom_rank_summary_id": "-1",
+            "user_custom_rank_summary_id": -1
         }
+    }).then((body) => {
+        var data = {
+            sport: options.sport,
+            season: options.season,
+            division: options.division,
+            type: options.type,
+            gameHigh: options.gameHigh,
+            rankingsPeriods: [],
+            categories: []
+        };
 
-        if (response.statusCode == 200) {
-            var data = {
-                sport: options.sport,
-                season: options.season,
-                division: options.division,
-                type: options.type,
-                gameHigh: options.gameHigh,
-                rankingsPeriods: [],
-                categories: []
-            };
+        var $ = cheerio.load(body);
 
-            var $ = cheerio.load(body);
+        extractSelectList($, data.rankingsPeriods, 'rp');
+        extractSelectList($, data.categories, 'Stats');
 
-            extractSelectList($, data.rankingsPeriods, 'rp');
-            extractSelectList($, data.categories, 'Stats');
-
-            callback(data);
-        }
+        return data;
     });
+
+    return callback ? promise.then(callback) : promise;
 }

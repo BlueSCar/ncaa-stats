@@ -7,7 +7,7 @@ var stats = app.stats;
 
 describe('Sports', function() {
     it('should get the list of available sports', function(done) {
-        sports.getSports(function(data) {
+        sports.getSports().then((data) => {
             data.should.exist;
             data.should.be.json;
 

@@ -17,12 +17,12 @@ npm install ncaa-stats
 var ncaa = require('ncaa-stats');
 
 // get all available sports
-ncaa.sports.getSports(function(data) {
+ncaa.sports.getSports().then((data) => {
     console.log(data);
 });
 
 // get list of seasons for a particular sport (e.g. Men's Basketball')
-ncaa.sports.getSeasons('MBB', function(data) {
+ncaa.sports.getSeasons('MBB').then((data) => {
     console.log(data);
 });
 
@@ -30,7 +30,7 @@ ncaa.sports.getSeasons('MBB', function(data) {
 ncaa.sports.getDivisions({
     sport: 'MFB', // Football
     season: '2017' // The 2016-2017 season
-}, function(data) {
+}).then((data) => {
     console.log(data);
 });
 
@@ -41,7 +41,7 @@ ncaa.sports.getSportDivisionData({
     division: 11, // Division I FBS
     type: 'individual', // individual statistics
     gameHigh: false // regular statistics
-}, function(data) {
+}).then((data) => {
     console.log(data);
 });
 
@@ -51,7 +51,7 @@ ncaa.sports.getSportDivisionData({
     division: 12, // Division I FCS
     type: 'team', // team statistics
     gameHigh: true // game high statistics
-}, function(data) {
+}).then((data) => {
     console.log(data);
 });
 ```
@@ -66,7 +66,7 @@ ncaa.stats.getIndividualStats({
     division: '11', // Div I FBS
     category: '20' // All purpose yardage
         // defaults to most recent year and ranking period if none specified
-}, function(data) {
+}).then((data) => {
     console.log(data);
 });
 
@@ -77,7 +77,7 @@ ncaa.stats.getIndividualGameHighs({
     division: '2', // Division II
     season: '2016', // The 2015-2016 season
     category: '612' // Field Goals Made
-}, function(data) {
+}).then((data) => {
     console.log(data);
 });
 ```
@@ -91,7 +91,7 @@ ncaa.stats.getTeamStats({
     division: '3', // Division III
     season: '2015', // The 2014-2015 season
     category: '173' // Goal Against Average
-}, function(data) {
+}).then((data) => {
     console.log(data);
 });
 
@@ -101,7 +101,7 @@ ncaa.stats.getTeamGameHighs({
     division: '1', // Division I
     season: '2016', // The 2015-2016 season
     category: '746' // Attendance
-}, function(data) {
+}).then((data) => {
     console.log(data);
 });
 ```

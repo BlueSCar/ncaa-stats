@@ -1,36 +1,33 @@
-var request = require('request');
+var rp = require('request-promise');
 var cheerio = require('cheerio');
 var decode = require('decode-html');
 var tabletojson = require("tabletojson");
 
-var requestData = function(options, callback) {
+var requestData = function (options) {
     var baseUrl = 'http://stats.ncaa.org/rankings/change_sport_year_div';
-    var requestBody = 'sport_code={{sport}}&academic_year={{season}}&division={{division}}&ranking_period={{rankingPeriod}}&team_individual={{type}}&game_high={{gameHigh}}&ranking_summary=N&org_id=-1&stat_seq={{category}}&conf_id=-1&region_id=-1&ncaa_custom_rank_summary_id=-1&user_custom_rank_summary_id=-1';
 
-    requestBody = requestBody
-        .replace('{{sport}}', options.sport)
-        .replace('{{season}}', options.season || '')
-        .replace('{{division}}', options.division || '')
-        .replace('{{rankingPeriod}}', options.rankingPeriod || '')
-        .replace('{{type}}', options.type || '')
-        .replace('{{gameHigh}}', options.gameHigh || '')
-        .replace('{{category}}', options.category);
-
-    request.post({
+    return rp({
         url: baseUrl,
-        body: requestBody
-    }, function(error, response, body) {
-        if (error) {
-            console.error(err);
-        }
-
-        if (response.statusCode == 200) {
-            callback(body);
+        method: 'POST',
+        formData: {
+            "sport_code": options.sport,
+            "academic_year": options.season || '',
+            "division": options.division || '',
+            "ranking_period": options.rankingPeriod || '',
+            "team_individual": options.type || '',
+            "game_high": options.gameHigh,
+            "ranking_summary": "N",
+            "org_id": "-1",
+            "stat_seq": options.category,
+            "conf_id": "-1",
+            "region_id": "-1",
+            "ncaa_custom_rank_summary_id": "-1",
+            "user_custom_rank_summary_id": -1
         }
     });
 };
 
-var createPlayerData = function(body) {
+var createPlayerData = function (body) {
     var data = {
         players: []
     };
@@ -38,7 +35,7 @@ var createPlayerData = function(body) {
     var playerRegExp = /^(.+), (.+) \((.+)\)$/;
     var $ = cheerio.load(body);
 
-    tabletojson.convert(body)[1].forEach(function(item) {
+    tabletojson.convert(body)[1].forEach(function (item) {
         var match = playerRegExp.exec(item.Player);
 
         if (match && item.Ranking != '-') {
@@ -53,7 +50,7 @@ var createPlayerData = function(body) {
     return data;
 };
 
-var createTeamData = function(body) {
+var createTeamData = function (body) {
     var data = {
         teams: []
     };
@@ -61,7 +58,7 @@ var createTeamData = function(body) {
     var teamRegExp = /^(.+) \((.+)\)$/;
     var $ = cheerio.load(body);
 
-    tabletojson.convert(body)[1].forEach(function(item) {
+    tabletojson.convert(body)[1].forEach(function (item) {
         var match = teamRegExp.exec(item.Team);
 
         if (match) {
@@ -75,42 +72,46 @@ var createTeamData = function(body) {
     return data;
 };
 
-exports.getIndividualStats = function(options, callback) {
+exports.getIndividualStats = function (options, callback) {
     options.type = 'I';
     options.gameHigh = 'N';
 
-    requestData(options, function(body) {
-        var data = createPlayerData(body);
-        callback(data);
-    })
+    var promise = requestData(options).then((body) => {
+        return createPlayerData(body);
+    });
+
+    return callback ? promise.then(callback) : promise;
 };
 
-exports.getIndividualGameHighs = function(options, callback) {
+exports.getIndividualGameHighs = function (options, callback) {
     options.type = 'I';
     options.gameHigh = 'Y';
 
-    requestData(options, function(body) {
-        var data = createPlayerData(body);
-        callback(data);
-    })
+    var promise = requestData(options).then(body => {
+        return createPlayerData(body);
+    });
+
+    return callback ? promise.then(callback) : promise;
 };
 
-exports.getTeamStats = function(options, callback) {
+exports.getTeamStats = function (options, callback) {
     options.type = 'T';
     options.gameHigh = 'N';
 
-    requestData(options, function(body) {
-        var data = createTeamData(body);
-        callback(data);
-    })
+    var promise = requestData(options).then((body) => {
+        return createTeamData(body);
+    });
+
+    return callback ? promise.then(callback) : promise;
 };
 
-exports.getTeamGameHighs = function(options, callback) {
+exports.getTeamGameHighs = function (options, callback) {
     options.type = 'T';
     options.gameHigh = 'Y';
 
-    requestData(options, function(body) {
-        var data = createTeamData(body);
-        callback(data);
-    })
+    var promise = requestData(options).then((body) => {
+        return createTeamData(body);
+    });
+
+    return callback ? promise.then(callback) : promise;
 };
